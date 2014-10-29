@@ -1,8 +1,9 @@
 {
     "type": "root",
-    "rules": [
+    "childs": [
         {
             "type": "atrule",
+            "name": "supports",
             "source": {
                 "start": {
                     "line": 1,
@@ -16,13 +17,13 @@
                 }
             },
             "before": "",
-            "name": "supports",
-            "params": "(animation-name: test)",
-            "afterName": " ",
             "between": " ",
-            "rules": [
+            "afterName": " ",
+            "params": "(animation-name: test)",
+            "childs": [
                 {
                     "type": "atrule",
+                    "name": "-custom-keyframe",
                     "source": {
                         "start": {
                             "line": 2,
@@ -36,14 +37,13 @@
                         }
                     },
                     "before": "\n    ",
-                    "name": "-custom-keyframe",
-                    "params": "anim",
-                    "afterName": " ",
                     "between": " ",
-                    "rules": [
+                    "afterName": " ",
+                    "params": "anim",
+                    "childs": [
                         {
                             "type": "rule",
-                            "decls": [
+                            "childs": [
                                 {
                                     "type": "decl",
                                     "source": {
@@ -77,14 +77,14 @@
                                 }
                             },
                             "before": "\n        ",
-                            "selector": "from",
                             "between": " ",
+                            "selector": "from",
                             "semicolon": true,
                             "after": "\n        "
                         },
                         {
                             "type": "rule",
-                            "decls": [
+                            "childs": [
                                 {
                                     "type": "decl",
                                     "source": {
@@ -118,8 +118,8 @@
                                 }
                             },
                             "before": "\n        ",
-                            "selector": "to",
                             "between": " ",
+                            "selector": "to",
                             "after": "\n        "
                         }
                     ],

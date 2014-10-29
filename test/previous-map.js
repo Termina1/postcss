@@ -38,7 +38,7 @@ describe('PreviousMap', () => {
         parse('a{}', map)
             .prevMap.should.not.have.property('annotation');
         parse('a{}/*# sourceMappingURL=a.css.map */', map)
-            .prevMap.annotation.should.eql('# sourceMappingURL=a.css.map');
+            .prevMap.annotation.should.eql('a.css.map');
     });
 
     it('checks previous sources content', () => {
@@ -115,7 +115,7 @@ describe('PreviousMap', () => {
         var opts = { map: { prev: map } };
         var prev = parse('a{}', opts).prevMap;
 
-        prev.file.should.match(/^\d+$/);
+        prev.file.should.match(/^<input css \d+>$/);
         prev.file.should.not.eql( parse('a{}', opts).prevMap.file );
     });
 

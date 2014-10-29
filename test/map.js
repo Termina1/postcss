@@ -369,7 +369,7 @@ describe('source maps', () => {
         });
         var file2 = postcss.parse('b { }', { from: 'b.css' });
 
-        file2.append( file1.rules[0].clone() );
+        file2.append( file1.childs[0].clone() );
         var step2 = file2.toResult({ to: 'c.css' });
 
         consumer(step2.map).sourceContentFor('b.css').should.eql('b { }');
@@ -388,7 +388,7 @@ describe('source maps', () => {
         });
         var file2 = postcss.parse('b { }', { from: 'b.css' });
 
-        file2.append( file1.rules[0].clone() );
+        file2.append( file1.childs[0].clone() );
         var step2 = file2.toResult({
             to: 'c.css',
             map: { sourcesContent: false }
@@ -399,10 +399,15 @@ describe('source maps', () => {
         should.not.exists(map.sourceContentFor('../a.css'));
     });
 
+    it('detects input file name from map', () => {
+        var one = this.doubler.process('a { }', { to: 'a.css', map: true });
+        var two = this.doubler.process(one.css, { map: { prev: one.map } });
+        two.root.first.source.file.should.eql('a.css');
+    });
+
     it('works without file names for inline maps', () => {
         var step1 = this.doubler.process('a { }', { map: 'inline' });
         var step2 = this.doubler.process(step1.css);
-        postcss.parse(step2.css).prevMap.file.should.match(/^\d+$/);
     });
 
     it('supports UTF-8', () => {
@@ -418,6 +423,38 @@ describe('source maps', () => {
 
         var map = postcss.parse(step2.css).prevMap.consumer();
         map.file.should.eql('выход.css');
+    });
+
+    it('uses input file name as output file name', () => {
+        var result = this.doubler.process('a{}', { from: 'a.css', map: true });
+        result.map.toJSON().file.should.eql('a.css');
+    });
+
+    it('uses to.css as default output name', () => {
+        var result = this.doubler.process('a{}', { map: true });
+        result.map.toJSON().file.should.eql('to.css');
+    });
+
+    it('supports annotation comment in any place', () => {
+        var css    = '/*# sourceMappingURL=a.css.map */a { }';
+        var result = postcss().process(css, {
+            from: 'a.css',
+            to:   'b.css',
+            map:  true
+        });
+
+        result.css.should.eql("a { }\n/*# sourceMappingURL=b.css.map */");
+    });
+
+    it('does not update annotation on request', () => {
+        var css    = 'a { }/*# sourceMappingURL=a.css.map */';
+        var result = postcss().process(css, {
+            from: 'a.css',
+            to:   'b.css',
+            map:  { annotation: false }
+        });
+
+        result.css.should.eql("a { }/*# sourceMappingURL=a.css.map */");
     });
 
 });

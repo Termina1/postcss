@@ -20,11 +20,11 @@ describe('postcss.parse()', () => {
         });
 
         it('parses empty file', () => {
-            parse('').should.eql({ type: 'root', rules: [], after: '' });
+            parse('').should.eql({ type: 'root', childs: [], after: '' });
         });
 
         it('parses spaces', () => {
-            parse(" \n").should.eql({ type: 'root', rules: [], after: " \n" });
+            parse(" \n").should.eql({ type: 'root', childs: [], after: " \n" });
         });
 
     });
@@ -41,23 +41,23 @@ describe('postcss.parse()', () => {
 
     it('saves source file', () => {
         var css = parse('a {}', { from: 'a.css' });
-        css.rules[0].source.file.should.eql(path.resolve('a.css'));
+        css.childs[0].source.file.should.eql(path.resolve('a.css'));
     });
 
     it('sets unique ID for file without name', () => {
         var css1 = parse('a {}');
         var css2 = parse('a {}');
-        css1.rules[0].source.id.should.match(/^\d+$/);
-        css2.rules[0].source.id.should.not.eql(css1.rules[0].source.id);
+        css1.childs[0].source.id.should.match(/^<input css \d+>$/);
+        css2.childs[0].source.id.should.not.eql(css1.childs[0].source.id);
     });
 
     it('sets parent node', () => {
         var css = parse(read('atrule-rules.css'));
 
-        var support   = css.rules[0];
-        var keyframes = support.rules[0];
-        var from      = keyframes.rules[0];
-        var decl      = from.decls[0];
+        var support   = css.childs[0];
+        var keyframes = support.childs[0];
+        var from      = keyframes.childs[0];
+        var decl      = from.childs[0];
 
         decl.parent.should.exactly(from);
         from.parent.should.exactly(keyframes);
@@ -77,7 +77,7 @@ describe('postcss.parse()', () => {
                 .toString().should.eql('@media (screen) { a {\n}}');
 
             parse('a { color', { safe: true })
-                .first.first.prop.should.eql('color');
+                .toString().should.eql('a { color}');
         });
 
         it('throws on unnecessary block close', () => {
@@ -109,33 +109,25 @@ describe('postcss.parse()', () => {
 
         it('fixes unclosed quote in safe mode', () => {
             parse('a { content: "b', { safe: true }).
-                toString().should.eql('a { content: "b}');
+                toString().should.eql('a { content: "b"}');
         });
 
         it('throws on property without value', () => {
             ( () => parse("a { b;}") ).should
-                .throw(/Missing property value/);
-            ( () => parse("a { b }") ).should
-                .throw(/Missing property value/);
+                .throw(/:1:5: Unknown word/);
+            ( () => parse("a { b b }") ).should
+                .throw(/:1:5: Unknown word/);
         });
 
         it('fixes property without value in safe mode', () => {
             var root = parse('a { color: white; one }', { safe: true });
-            root.first.decls.length.should.eql(1);
+            root.first.childs.length.should.eql(1);
             root.first.semicolon.should.be.true;
             root.first.after.should.eql(' one ');
         });
 
         it('throws on nameless at-rule', () => {
-            ( () => parse('@') ).should.throw(/At-rule without name/);
-        });
-
-        it('throws on block inside declarations', () => {
-            ( () => parse("a {{}}") ).should.throw(/Unexpected \{/);
-        });
-
-        it('throw on rules in declarations at-rule', () => {
-            ( () => parse('@page { a { } }') ).should.throw(/Unexpected \{/);
+            ( () => parse('@') ).should.throw(/:1:1: At-rule without name/);
         });
 
     });

@@ -1,9 +1,9 @@
 {
     "type": "root",
-    "rules": [
+    "childs": [
         {
             "type": "rule",
-            "decls": [],
+            "childs": [],
             "source": {
                 "start": {
                     "line": 2,
@@ -17,12 +17,12 @@
                 }
             },
             "before": "\n",
-            "selector": "a b",
+            "between": " ",
             "_selector": {
                 "value": "a b",
                 "raw": "a/* { } */ b"
             },
-            "between": " ",
+            "selector": "a b",
             "after": ""
         }
     ],

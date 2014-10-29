@@ -1,8 +1,9 @@
 {
     "type": "root",
-    "rules": [
+    "childs": [
         {
             "type": "atrule",
+            "name": "page",
             "source": {
                 "start": {
                     "line": 1,
@@ -16,9 +17,10 @@
                 }
             },
             "before": "",
-            "name": "page",
             "between": "",
-            "decls": [],
+            "afterName": "",
+            "params": "",
+            "childs": [],
             "after": " "
         }
     ],

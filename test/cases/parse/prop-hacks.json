@@ -1,9 +1,9 @@
 {
     "type": "root",
-    "rules": [
+    "childs": [
         {
             "type": "rule",
-            "decls": [
+            "childs": [
                 {
                     "type": "decl",
                     "source": {
@@ -75,8 +75,8 @@
                 }
             },
             "before": "",
-            "selector": "a",
             "between": " ",
+            "selector": "a",
             "semicolon": true,
             "after": "\n"
         }
