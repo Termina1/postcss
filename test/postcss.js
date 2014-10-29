@@ -190,7 +190,7 @@ describe('postcss()', () => {
                         rule.prepend({ prop: 'content', value: '""' });
                     }
                 });
-                setTimeout(done, 00);
+                setTimeout(done, 50);
             });
         });
 
@@ -225,11 +225,24 @@ describe('postcss()', () => {
             result.should.eventuallyEql('a::before{content:"";top:0}', cb);
         });
 
+        it('takes maps from previous result', (cb) => {
+            postcss().async('a{}', {
+                from: 'a.css',
+                to:   'b.css',
+                map:   true
+            }).then( (one) => {
+                return postcss().async(one, { to: 'c.css' });
+            }).then( (two) => {
+                two.map.toJSON().sources.should.eql(['a.css']);
+                cb();
+            }).catch(cb);
+        });
+
         it('throws with file name', (cb) => {
-            postcss().async('a {', { from: 'A' }).catch(function(error) {
+            postcss().async('a {', { from: 'a.css' }).catch(function(error) {
                 try {
-                    error.file.should.eql('A');
-                    error.message.should.eql('A:1:1: Unclosed block');
+                    error.file.should.eql(path.resolve('a.css'));
+                    error.message.should.match(/a.css:1:1: Unclosed block$/);
                     cb();
                 } catch(e) {
                     cb(e);
@@ -274,6 +287,23 @@ describe('postcss()', () => {
             var a = (css, opts) => opts.should.eql({ from: 'a.css' });
             postcss(a).async('a {}', { from: 'a.css' })
                 .then(cb.bind(null, null)).catch(cb);
+        });
+
+        it('accepts source map from PostCSS', (cb) => {
+            postcss().async('a{}', {
+                from: 'a.css',
+                to:   'b.css',
+                map:   true
+            }).then( (one) => {
+                return postcss().async(one.css, {
+                    from: 'b.css',
+                    to:   'c.css',
+                    map: { prev: one.map }
+                });
+            }).then( (two) => {
+                two.map.toJSON().sources.should.eql(['a.css']);
+                cb();
+            }).catch(cb);
         });
 
     });
