@@ -12,7 +12,8 @@
     "dependencies": {
         "es6-transpiler": "0.7.16",
         "source-map":     "~0.1.39",
-        "js-base64":      "~2.1.5"
+        "js-base64":      "~2.1.5",
+        "bluebird":       "^2.3.10"
     },
     "devDependencies": {
         "gulp-es6-transpiler": "1.0.0",
