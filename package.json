@@ -13,6 +13,7 @@
         "source-map": "~0.1.40",
         "js-base64":  "~2.1.5",
         "6to5":       "1.9.10"
+        "bluebird":   "^2.3.10"
     },
     "devDependencies": {
         "concat-with-sourcemaps": "0.1.5",
